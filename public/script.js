@@ -1,5 +1,8 @@
 const ROUND_SECONDS = 120;
 const LOSS_START = 25;
+/** How much the framing bar moves per answer (larger = more visible feedback). */
+const BAR_STEP_CORRECT = 2;
+const BAR_STEP_WRONG = 1;
 /** Must match server.js FIXED_SEQUENCE_SEED / GLOBAL_POOL_ID for identical fallback. */
 const FIXED_SEQUENCE_SEED = 924852001;
 const GLOBAL_POOL_ID = "fixed_v4";
@@ -466,12 +469,12 @@ function applyScoring(isCorrect) {
     score += 1;
     correctCount += 1;
     if (condition === "gain") {
-      barValue += 1;
+      barValue += BAR_STEP_CORRECT;
     }
   } else {
     wrongCount += 1;
     if (condition === "loss") {
-      barValue = Math.max(0, barValue - 1);
+      barValue = Math.max(0, barValue - BAR_STEP_WRONG);
     }
   }
 }
