@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZetaMac Experiment</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section id="setup" class="setup-panel">
+        <h1>ZetaMac-Style Arithmetic Task</h1>
+        <p>Timed task (120 seconds) with gain/loss framed points bar. You are not expected to finish all questions.</p>
+        <p class="setup-hint">A unique Participant ID is created automatically when you start.</p>
+
+        <label for="condition">Condition</label>
+        <select id="condition">
+          <option value="">-- Select framing condition --</option>
+          <option value="gain">Gain Bar</option>
+          <option value="loss">Loss Bar</option>
+        </select>
+
+        <button id="startBtn">Start round (120 s)</button>
+      </section>
+
+      <section id="game" class="game-panel hidden">
+        <div class="game-top">
+          <header class="top-row">
+            <span id="timeLeft">Seconds left: 120</span>
+            <span id="scoreLabel">Score: 0</span>
+          </header>
+          <div class="bar-row">
+            <div class="bar-stack">
+              <div id="barWrapper" class="bar-wrapper">
+                <div id="barFill" class="bar-fill"></div>
+              </div>
+              <span id="barText" class="bar-label">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="question-row">
+          <label id="questionText" for="answerInput">0 + 0 =</label>
+          <input
+            id="answerInput"
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+          />
+        </div>
+      </section>
+
+      <section id="end" class="end-panel hidden">
+        <h2>Round Complete</h2>
+        <p id="endSummary"></p>
+        <a href="/api/results.csv" target="_blank" rel="noreferrer">Download CSV Results</a>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

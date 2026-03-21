@@ -1,0 +1,24 @@
+{
+  "name": "zetamac",
+  "version": "1.0.0",
+  "description": "Gain/loss framed feedback for a ZetaMac-like application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danield116/ZetaMac.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danield116/ZetaMac/issues"
+  },
+  "homepage": "https://github.com/danield116/ZetaMac#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
