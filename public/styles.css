@@ -88,6 +88,12 @@ body {
   font-size: 22px;
 }
 
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .bar-row {
   display: flex;
   justify-content: center;

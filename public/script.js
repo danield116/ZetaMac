@@ -17,6 +17,7 @@ const startBtn = document.getElementById("startBtn");
 
 const timeLeftEl = document.getElementById("timeLeft");
 const scoreLabelEl = document.getElementById("scoreLabel");
+const livesLabelEl = document.getElementById("livesLabel");
 const questionTextEl = document.getElementById("questionText");
 const answerInputEl = document.getElementById("answerInput");
 const endSummaryEl = document.getElementById("endSummary");
@@ -33,6 +34,7 @@ let intervalId = null;
 
 let score = 0;
 let barValue = 0;
+let livesValue = 25;
 let questionIndex = 0;
 let correctCount = 0;
 let wrongCount = 0;
@@ -41,6 +43,18 @@ let questionShownAt = 0;
 let experimentComplete = false;
 let questionPool = [];
 let cachedGlobalSequence = null;
+
+function updateLivesUI() {
+  if (condition === "loss") {
+    scoreLabelEl.classList.add("hidden");
+    livesLabelEl.classList.remove("hidden");
+    livesLabelEl.textContent = `Lives: ${livesValue}`;
+  } else {
+    scoreLabelEl.classList.remove("hidden");
+    livesLabelEl.classList.add("hidden");
+    scoreLabelEl.textContent = `Score: ${score}`;
+  }
+}
 
 function makeSessionId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -420,13 +434,7 @@ function updateBar() {
 
 function updateTopInfo() {
   timeLeftEl.textContent = `Seconds left: ${timeLeft}`;
-  if (condition === "loss") {
-    scoreLabelEl.classList.add("hidden");
-    scoreLabelEl.textContent = "";
-  } else {
-    scoreLabelEl.classList.remove("hidden");
-    scoreLabelEl.textContent = `Score: ${score}`;
-  }
+  updateLivesUI();
 }
 
 function nextQuestion() {
@@ -481,6 +489,7 @@ function applyScoring(isCorrect) {
   } else {
     wrongCount += 1;
     if (condition === "loss") {
+      livesValue = Math.max(0, livesValue - 1);
       barValue = Math.max(0, barValue - BAR_STEP_WRONG);
     }
   }
@@ -513,9 +522,11 @@ function endRound() {
   endEl.classList.remove("hidden");
 
   const scorePart = condition === "gain" ? `Score: ${score}, ` : "";
+  const livesPart = condition === "loss" ? `Lives: ${livesValue}, ` : "";
   endSummaryEl.textContent =
     `Participant ${participantId || "N/A"} finished ${condition.toUpperCase()} condition. ` +
-    `Pool: ${poolId}, ${scorePart}Correct: ${correctCount}, Wrong: ${wrongCount}, Final bar value: ${barValue}.`;
+    `Pool: ${poolId}, ${scorePart}${livesPart}Correct: ${correctCount}, Wrong: ${wrongCount}, ` +
+    `Final bar value: ${barValue}.`;
 }
 
 async function startRound() {
@@ -550,6 +561,7 @@ async function startRound() {
   wrongCount = 0;
   experimentComplete = false;
   barValue = condition === "gain" ? 0 : LOSS_START;
+  livesValue = 25;
 
   setupEl.classList.add("hidden");
   endEl.classList.add("hidden");
@@ -557,6 +569,7 @@ async function startRound() {
 
   updateTopInfo();
   updateBar();
+  updateLivesUI();
   nextQuestion();
 
   intervalId = setInterval(() => {
