@@ -420,7 +420,13 @@ function updateBar() {
 
 function updateTopInfo() {
   timeLeftEl.textContent = `Seconds left: ${timeLeft}`;
-  scoreLabelEl.textContent = `Score: ${score}`;
+  if (condition === "loss") {
+    scoreLabelEl.classList.add("hidden");
+    scoreLabelEl.textContent = "";
+  } else {
+    scoreLabelEl.classList.remove("hidden");
+    scoreLabelEl.textContent = `Score: ${score}`;
+  }
 }
 
 function nextQuestion() {
@@ -448,6 +454,7 @@ async function logAttempt(userAnswer, isCorrect, reactionTimeMs) {
     correctAnswer: currentQuestion.answer,
     userAnswer,
     isCorrect,
+    runningScore: condition === "gain" ? score : "",
     reactionTimeMs: Math.round(reactionTimeMs),
     timestamp: new Date().toISOString(),
   };
@@ -466,9 +473,9 @@ async function logAttempt(userAnswer, isCorrect, reactionTimeMs) {
 
 function applyScoring(isCorrect) {
   if (isCorrect) {
-    score += 1;
     correctCount += 1;
     if (condition === "gain") {
+      score += 1;
       barValue += BAR_STEP_CORRECT;
     }
   } else {
@@ -488,8 +495,8 @@ async function submitAnswer() {
   const isCorrect = userAnswer === currentQuestion.answer;
   const reactionTimeMs = performance.now() - questionShownAt;
 
-  await logAttempt(userAnswer, isCorrect, reactionTimeMs);
   applyScoring(isCorrect);
+  await logAttempt(userAnswer, isCorrect, reactionTimeMs);
   questionIndex += 1;
   updateTopInfo();
   updateBar();
@@ -505,9 +512,10 @@ function endRound() {
   gameEl.classList.add("hidden");
   endEl.classList.remove("hidden");
 
+  const scorePart = condition === "gain" ? `Score: ${score}, ` : "";
   endSummaryEl.textContent =
     `Participant ${participantId || "N/A"} finished ${condition.toUpperCase()} condition. ` +
-    `Pool: ${poolId}, Score: ${score}, Correct: ${correctCount}, Wrong: ${wrongCount}, Final bar value: ${barValue}.`;
+    `Pool: ${poolId}, ${scorePart}Correct: ${correctCount}, Wrong: ${wrongCount}, Final bar value: ${barValue}.`;
 }
 
 async function startRound() {

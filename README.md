@@ -15,8 +15,8 @@ Gain/loss framed feedback for a ZetaMac-like arithmetic web application.
   - `pool_id` in the CSV is `fixed_v4` (change seed + id in code if you publish a new study version)
   - Round length: **`ROUND_SECONDS` in `server.js` / `public/script.js`** (default **120**). Increase if you want even more exposure to harder items; decrease only if you need a shorter protocol.
 - Two conditions:
-  - `gain`: points accumulation bar (starts at `0`, increases on correct answers)
-  - `loss`: points deaccumulation bar (starts at `25`, decreases on wrong answers, floor at `0`)
+  - `gain`: points accumulation bar (starts at `0`, increases on correct answers) and **Score** shown in the UI; `running_score` is logged in the CSV
+  - `loss`: points deaccumulation bar (starts at `25`, decreases on wrong answers, floor at `0`); **no Score** in the UI or CSV (`running_score` is empty) to avoid mixing gain-framed feedback
 - CSV logging per attempt.
 - Participant ID is **generated automatically** for each round (no manual entry). Each ID is a **UUID** (`P-…`), so it is effectively unique even if someone else hosts the app on their own computer—you will not get ID “collisions” when merging CSV files from different machines.
 
@@ -37,6 +37,7 @@ If you change column layout and already have an old `results.csv`, **delete or r
 - `correct_answer`
 - `user_answer`
 - `is_correct` (`1` = correct, `0` = incorrect)
+- `running_score` — cumulative correct count after each attempt in **gain** only; **empty** for **loss** (no score framing in that condition)
 - `response_time_ms`
 - `answer_speed_q_per_s`
 - `timestamp`

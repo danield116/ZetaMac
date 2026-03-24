@@ -23,7 +23,7 @@ function ensureCsvFile() {
 
   if (!fs.existsSync(csvPath)) {
     const header =
-      "session_id,participant_id,condition,pool_id,question_index,operation,left_operand,right_operand,correct_answer,user_answer,is_correct,response_time_ms,answer_speed_q_per_s,timestamp\n";
+      "session_id,participant_id,condition,pool_id,question_index,operation,left_operand,right_operand,correct_answer,user_answer,is_correct,running_score,response_time_ms,answer_speed_q_per_s,timestamp\n";
     fs.writeFileSync(csvPath, header, "utf8");
   }
 }
@@ -191,6 +191,7 @@ app.post("/api/log", (req, res) => {
     correctAnswer,
     userAnswer,
     isCorrect,
+    runningScore,
     reactionTimeMs,
     timestamp,
   } = req.body || {};
@@ -199,6 +200,11 @@ app.post("/api/log", (req, res) => {
     isCorrect === true || isCorrect === 1 || String(isCorrect).toLowerCase() === "true" ? 1 : 0;
 
   const rt = Number(reactionTimeMs);
+
+  const scoreCell =
+    String(condition || "").toLowerCase() === "gain" && runningScore !== null && runningScore !== undefined && runningScore !== ""
+      ? Number(runningScore)
+      : "";
 
   const rowValues = [
     sessionId,
@@ -212,6 +218,7 @@ app.post("/api/log", (req, res) => {
     correctAnswer,
     userAnswer,
     correctFlag,
+    Number.isFinite(scoreCell) ? scoreCell : "",
     Number.isFinite(rt) ? Math.round(rt) : "",
     rt > 0 ? (1000 / rt).toFixed(4) : "",
     timestamp || new Date().toISOString(),
