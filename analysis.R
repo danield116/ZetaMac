@@ -313,6 +313,15 @@ cat("\n=============================\n")
 cat("INFERENTIAL TESTS\n")
 cat("=============================\n")
 
+cat("\nHypotheses (two-tailed):\n")
+cat("Speed (questions_attempted):\n")
+cat("  H0: mean/median speed is equal between gain and loss conditions.\n")
+cat("  HA: mean/median speed differs between gain and loss conditions.\n")
+cat("Accuracy (proportion correct):\n")
+cat("  H0: mean/median accuracy is equal between gain and loss conditions.\n")
+cat("  HA: mean/median accuracy differs between gain and loss conditions.\n")
+cat("Note: Welch tests compare means; Mann-Whitney compares central tendency/ranks.\n")
+
 # Automatic decision rule based on Shapiro-Wilk:
 # if BOTH condition groups have p > 0.05, use Welch t-test as primary;
 # otherwise use Mann-Whitney as primary.
