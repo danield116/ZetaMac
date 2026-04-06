@@ -313,21 +313,56 @@ cat("\n=============================\n")
 cat("INFERENTIAL TESTS\n")
 cat("=============================\n")
 
-cat("\nWelch t-test: speed by condition\n")
-t_speed <- t.test(questions_attempted ~ condition, data = participant_data)
-print(t_speed)
+# Automatic decision rule based on Shapiro-Wilk:
+# if BOTH condition groups have p > 0.05, use Welch t-test as primary;
+# otherwise use Mann-Whitney as primary.
+normal_speed <- all(sapply(sh_speed, function(x) x$p.value > 0.05))
+normal_accuracy <- all(sapply(sh_acc, function(x) x$p.value > 0.05))
 
-cat("\nWelch t-test: accuracy by condition\n")
-t_accuracy <- t.test(accuracy ~ condition, data = participant_data)
-print(t_accuracy)
+cat("\n--- Recommended tests (auto-selected from normality checks) ---\n")
+cat("Speed recommended test:",
+    ifelse(normal_speed, "Welch t-test (approximately normal)", "Mann-Whitney (non-normal)"),
+    "\n")
+cat("Accuracy recommended test:",
+    ifelse(normal_accuracy, "Welch t-test (approximately normal)", "Mann-Whitney (non-normal)"),
+    "\n")
 
-cat("\nMann-Whitney test: speed by condition\n")
-mw_speed <- wilcox.test(questions_attempted ~ condition, data = participant_data, exact = FALSE)
-print(mw_speed)
+# Speed tests
+if (normal_speed) {
+  cat("\nPrimary test for speed: Welch t-test\n")
+  primary_speed <- t.test(questions_attempted ~ condition, data = participant_data)
+} else {
+  cat("\nPrimary test for speed: Mann-Whitney\n")
+  primary_speed <- wilcox.test(questions_attempted ~ condition, data = participant_data, exact = FALSE)
+}
+print(primary_speed)
 
-cat("\nMann-Whitney test: accuracy by condition\n")
-mw_accuracy <- wilcox.test(accuracy ~ condition, data = participant_data, exact = FALSE)
-print(mw_accuracy)
+# Accuracy tests
+if (normal_accuracy) {
+  cat("\nPrimary test for accuracy: Welch t-test\n")
+  primary_accuracy <- t.test(accuracy ~ condition, data = participant_data)
+} else {
+  cat("\nPrimary test for accuracy: Mann-Whitney\n")
+  primary_accuracy <- wilcox.test(accuracy ~ condition, data = participant_data, exact = FALSE)
+}
+print(primary_accuracy)
+
+# Also print the alternate tests for transparency.
+cat("\nAlternate test for speed (for robustness):\n")
+if (normal_speed) {
+  alt_speed <- wilcox.test(questions_attempted ~ condition, data = participant_data, exact = FALSE)
+} else {
+  alt_speed <- t.test(questions_attempted ~ condition, data = participant_data)
+}
+print(alt_speed)
+
+cat("\nAlternate test for accuracy (for robustness):\n")
+if (normal_accuracy) {
+  alt_accuracy <- wilcox.test(accuracy ~ condition, data = participant_data, exact = FALSE)
+} else {
+  alt_accuracy <- t.test(accuracy ~ condition, data = participant_data)
+}
+print(alt_accuracy)
 
 # ----------------------------
 # 11. Speed-accuracy correlations
